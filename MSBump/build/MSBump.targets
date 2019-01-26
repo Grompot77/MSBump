@@ -12,6 +12,7 @@
       BumpPatch="$(BumpPatch)" 
       BumpRevision="$(BumpRevision)" 
       BumpLabel="$(BumpLabel)"
+      BumpLabelPatch ="$(BumpLabelPatch)" 
       ResetMajor="$(BumpResetMajor)" 
       ResetMinor="$(BumpResetMinor)" 
       ResetPatch="$(BumpResetPatch)" 
