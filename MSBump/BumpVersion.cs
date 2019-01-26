@@ -32,6 +32,7 @@ namespace MSBump
                                         BumpPatch = BumpPatch,
                                         BumpRevision = BumpRevision,
                                         BumpLabel = BumpLabel,
+                                        BumpLabelPatch = BumpLabelPatch,
                                         ResetMajor = ResetMajor,
                                         ResetMinor = ResetMinor,
                                         ResetPatch = ResetPatch,
@@ -79,13 +80,13 @@ namespace MSBump
         private bool TryBump(XDocument proj, string tagName, Settings settings)
         {
             // ReSharper disable once PossibleNullReferenceException
-	        var defaultNamespace = proj.Root.GetDefaultNamespace();
-	        var defaultNamespacePrefix = "ns";
-	        var xmlNamespaceManager = new XmlNamespaceManager(new NameTable());
+            var defaultNamespace = proj.Root.GetDefaultNamespace();
+            var defaultNamespacePrefix = "ns";
+            var xmlNamespaceManager = new XmlNamespaceManager(new NameTable());
 
-	        xmlNamespaceManager.AddNamespace(defaultNamespacePrefix, defaultNamespace.NamespaceName);
+            xmlNamespaceManager.AddNamespace(defaultNamespacePrefix, defaultNamespace.NamespaceName);
 
-	        var element = proj.Root.XPathSelectElement($"{defaultNamespacePrefix}:PropertyGroup/{defaultNamespacePrefix}:{tagName}", xmlNamespaceManager);
+            var element = proj.Root.XPathSelectElement($"{defaultNamespacePrefix}:PropertyGroup/{defaultNamespacePrefix}:{tagName}", xmlNamespaceManager);
 
             if (element == null)
                 return false;
@@ -138,6 +139,12 @@ namespace MSBump
                 }
                 var regex = new Regex($"^{settings.BumpLabel}(\\d*)$");
                 var value = 0;
+
+                Log.LogWarning(oldVersion.IsPrerelease.ToString());
+
+                if (settings.BumpLabelPatch && !oldVersion.IsPrerelease)
+                    Log.LogMessage(MessageImportance.High, $"Incrementing patch from {patch} to {++patch}");
+
                 foreach (var label in labels)
                 {
                     var match = regex.Match(label);
@@ -149,6 +156,7 @@ namespace MSBump
                         break;
                     }
                 }
+
                 value++;
                 labels.Add(settings.BumpLabel + value.ToString(new string('0', settings.LabelDigits)));
             }
@@ -187,6 +195,8 @@ namespace MSBump
         public bool BumpRevision { get; set; }
 
         public string BumpLabel { get; set; }
+
+        public bool BumpLabelPatch { get; set; }
 
         public bool ResetMajor { get; set; }
 

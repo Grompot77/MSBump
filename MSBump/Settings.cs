@@ -12,6 +12,8 @@
 
         public string BumpLabel { get; set; }
 
+        public bool BumpLabelPatch { get; set; }
+
         public bool ResetMajor { get; set; }
 
         public bool ResetMinor { get; set; }
